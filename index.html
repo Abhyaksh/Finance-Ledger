@@ -1,1 +1,1000 @@
-The requested file reference is not currently visible. Use files.search or files.list to rediscover the file, then retry with a returned ref_id or file_id.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Finance Ledger</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMxMjMzMzEiLz4KICA8cmVjdCB4PSIxMyIgeT0iMzMiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxNiIgcng9IjMiIGZpbGw9IiNkOWE2MzYiLz4KICA8cmVjdCB4PSIyNi41IiB5PSIyMiIgd2lkdGg9IjExIiBoZWlnaHQ9IjI3IiByeD0iMyIgZmlsbD0iI2Q5YTYzNiIvPgogIDxyZWN0IHg9IjQwIiB5PSIxMSIgd2lkdGg9IjExIiBoZWlnaHQ9IjM4IiByeD0iMyIgZmlsbD0iI2Q5YTYzNiIvPgo8L3N2Zz4K">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#123331;
+    --ink-2:#1c4744;
+    --paper:#efe8d8;
+    --paper-2:#e6ddc8;
+    --paper-line:#d8cbaa;
+    --text:#20241f;
+    --text-dim:#5a6058;
+    --ochre:#b8811f;
+    --ochre-deep:#8f640f;
+    --brick:#a3392a;
+    --cream:#f8f5ec;
+    --fallback-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    --fallback-serif: Georgia, "Times New Roman", serif;
+    --fallback-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    --cream-fixed:#f8f5ec; /* always-light text/dots for the always-dark ink header & date picker — must NOT shift in dark mode */
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#16241f; --paper-2:#1c2c26; --paper-line:#2c3b33;
+      --text:#eee7d6; --text-dim:#9fa89c; --cream:#1c2c26;
+      --ink:#0d1a17; --ink-2:#12241f;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#16241f; --paper-2:#1c2c26; --paper-line:#2c3b33;
+    --text:#eee7d6; --text-dim:#9fa89c; --cream:#1c2c26;
+    --ink:#0d1a17; --ink-2:#12241f;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    height:100%;
+    margin:0;
+    background:var(--ink);
+    background-image: linear-gradient(180deg, var(--ink) 0%, var(--ink-2) 100%);
+    font-family: 'IBM Plex Sans', var(--fallback-sans);
+    color:var(--text);
+    overscroll-behavior:none;
+  }
+  body{
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+
+  .app{
+    height:100%;
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding:14px 8px 10px;
+  }
+  @media (min-width:480px){
+    .app{ padding:18px 14px 12px; }
+  }
+
+  .topbar{
+    width:100%;
+    max-width:480px;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:10px;
+    padding:2px 4px 12px;
+    color:var(--cream-fixed);
+  }
+  .brand-row{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    min-width:0;
+    flex-shrink:1;
+  }
+  .brand{
+    font-family:'Source Serif 4', var(--fallback-serif);
+    font-weight:800;
+    font-style:italic;
+    font-size:clamp(15px, 4.6vw, 20px);
+    letter-spacing:0.2px;
+    color:var(--cream-fixed);
+    min-width:0;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .brand .ledger{ color:var(--ochre); font-style:normal; }
+  .brand-badge{
+    font-family:'IBM Plex Mono', var(--fallback-mono);
+    font-size:9px;
+    font-weight:600;
+    letter-spacing:0.07em;
+    color:var(--ink);
+    background:var(--ochre);
+    border-radius:100px;
+    padding:2.5px 7px 1.5px;
+    flex-shrink:0;
+  }
+  @media (max-width:360px){
+    .brand-badge{ display:none; }
+  }
+  .topbar-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-shrink:0;
+  }
+  .meta{
+    font-family:'Source Serif 4', var(--fallback-serif);
+    font-size:12.5px;
+    font-weight:800;
+    letter-spacing:.025em;
+    color:var(--cream-fixed);
+    text-align:right;
+    line-height:1.35;
+    min-width:0;
+    text-shadow:0 1px 0 rgba(0,0,0,.18);
+  }
+  .fsbtn{
+    flex-shrink:0;
+    width:28px;
+    height:28px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid #3c4d45;
+    border-radius:7px;
+    background:var(--ink-2);
+    color:var(--cream-fixed);
+    cursor:pointer;
+    padding:0;
+    transition: border-color .15s, background .15s;
+  }
+  .fsbtn:hover, .fsbtn:focus{ border-color:var(--ochre); }
+  .fsbtn svg{ width:14px; height:14px; }
+  .fsbtn.spinning svg{ animation:spin .7s linear; }
+  @keyframes spin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+
+  .update-banner{
+    display:none;
+    width:100%;
+    max-width:480px;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin:0 4px 10px;
+    padding:9px 12px;
+    border-radius:10px;
+    background:linear-gradient(180deg, #2a3a2f 0%, #1c2c26 100%);
+    border:1px solid var(--ochre);
+    box-shadow:0 2px 10px rgba(0,0,0,.3);
+    font-family:'IBM Plex Mono', var(--fallback-mono);
+    font-size:11.5px;
+    color:var(--cream-fixed);
+    animation: bannerIn .25s ease;
+  }
+  .update-banner.show{ display:flex; }
+  @keyframes bannerIn{ from{opacity:0; transform:translateY(-6px);} to{opacity:1; transform:translateY(0);} }
+  .update-banner-actions{ display:flex; align-items:center; gap:6px; flex-shrink:0; }
+  .update-banner button{
+    font-family:'IBM Plex Mono', var(--fallback-mono);
+    font-size:11px;
+    font-weight:700;
+    cursor:pointer;
+    border-radius:6px;
+    padding:4px 8px;
+    border:1px solid var(--ochre);
+    background:var(--ochre);
+    color:var(--ink);
+  }
+  .update-banner button#updateBannerDismiss{
+    background:transparent;
+    color:var(--cream-fixed);
+    border-color:#3c4d45;
+    padding:4px 7px;
+  }
+
+  .datepicker{
+    width:100%;
+    max-width:480px;
+    display:flex;
+    gap:7px;
+    padding:0 4px 12px;
+  }
+  .dateselect{
+    flex:1 1 0;
+    min-width:0;
+    font-family:'IBM Plex Mono', var(--fallback-mono);
+    font-size:14px;
+    font-weight:800;
+    letter-spacing:0.02em;
+    color:var(--cream-fixed);
+    background:linear-gradient(180deg, #1f3d39 0%, var(--ink-2) 100%);
+    border:1.5px solid #46584f;
+    border-radius:9px;
+    padding:9px 6px;
+    text-align:center;
+    text-align-last:center;
+    cursor:pointer;
+    -webkit-appearance:none;
+    appearance:none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 1px 3px rgba(0,0,0,.3);
+    transition: border-color .15s, box-shadow .15s, transform .1s;
+  }
+  .dateselect:hover{ border-color:var(--ochre); }
+  .dateselect:focus{
+    border-color:var(--ochre);
+    outline:none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 0 0 3px rgba(217,166,54,.28);
+  }
+  .dateselect:active{ transform:scale(.97); }
+  .dateselect option{ background:var(--ink-2); color:var(--cream-fixed); font-weight:600; }
+
+  .stage{
+    position:relative;
+    width:100%;
+    max-width:480px;
+    flex:1;
+    display:flex;
+    align-items:stretch;
+    min-height:0;
+  }
+
+  .navzone{
+    flex:0 0 18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  @media (min-width:480px){
+    .navzone{ flex-basis:28px; }
+    .navzone svg{ width:16px; height:16px; }
+  }
+  .navzone svg{ width:14px; height:14px; opacity:0.55; transition:opacity .15s; }
+  .navzone:hover svg{ opacity:0.95; }
+  .navzone.disabled{ pointer-events:none; opacity:0.15; }
+
+  .cardwrap{
+    flex:1;
+    min-width:0;
+    position:relative;
+    overflow:hidden;
+    border-radius:18px;
+  }
+
+  /* Sits behind the active card at the very top of the stack; revealed
+     as the card is dragged down during a pull-to-refresh gesture. */
+  .pull-indicator{
+    position:absolute;
+    top:0; left:0; right:0;
+    height:76px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:0;
+    pointer-events:none;
+    opacity:0;
+  }
+  .pull-indicator svg{
+    width:19px;
+    height:19px;
+    color:var(--ochre);
+    opacity:0.9;
+  }
+  .pull-indicator.refreshing svg{
+    animation:spin .7s linear infinite;
+  }
+
+  /* .card only ever handles the left-right slide animation — it never
+     scrolls itself, so animating its transform never fights a scroll
+     gesture. .cardscroll is the one and only element that scrolls, and
+     it never has a transition/transform on it, so scrolling stays smooth. */
+  .card{
+    position:absolute;
+    inset:0;
+    border-radius:18px;
+    overflow:hidden;
+    will-change:transform, opacity;
+    pointer-events:none;
+    transition: transform .38s cubic-bezier(.22,.68,0,1), opacity .3s ease;
+  }
+  .card.active{ pointer-events:auto; }
+  .card.enter-right{ transform:translateX(24px); opacity:0; }
+  .card.enter-left{ transform:translateX(-24px); opacity:0; }
+  .card.active{ transform:translateX(0); opacity:1; }
+  .card.leave-left{ transform:translateX(-24px); opacity:0; }
+  .card.leave-right{ transform:translateX(24px); opacity:0; }
+
+  .cardscroll{
+    height:100%;
+    width:100%;
+    overflow-y:auto;
+    overflow-x:hidden;
+    overscroll-behavior:contain;
+    background:var(--paper);
+    border:1px solid var(--paper-line);
+    border-radius:18px;
+    position:relative;
+  }
+
+  .cardinner{
+    padding:18px 16px 22px;
+    display:flex;
+    flex-direction:column;
+    min-height:100%;
+    min-width:0;
+    overflow-wrap:break-word;
+    word-break:break-word;
+  }
+  @media (min-width:480px){
+    .cardinner{ padding:22px 22px 26px; }
+  }
+
+  .tag{
+    display:inline-block;
+    align-self:flex-start;
+    font-family:'IBM Plex Mono', var(--fallback-mono);
+    font-size:11px;
+    letter-spacing:0.06em;
+    font-weight:600;
+    color:var(--ochre-deep);
+    background:transparent;
+    border:1px solid var(--ochre-deep);
+    border-radius:100px;
+    padding:4px 10px 3px;
+    margin-bottom:14px;
+    flex-shrink:0;
+    max-width:100%;
+    overflow-wrap:break-word;
+  }
+
+  h1{
+    font-family:'Source Serif 4', var(--fallback-serif);
+    font-weight:700;
+    font-size:clamp(20px, 5.8vw, 26px);
+    line-height:1.22;
+    margin:0 0 14px;
+    color:var(--text);
+    flex-shrink:0;
+    overflow-wrap:break-word;
+  }
+
+  .dek p{
+    font-size:15.5px;
+    line-height:1.66;
+    color:var(--text);
+    margin:0 0 14px;
+    overflow-wrap:break-word;
+  }
+  .dek p:last-child{ margin-bottom:0; }
+  .dek b{ font-weight:600; color:var(--text); }
+
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:10px;
+    margin-top:18px;
+    flex-shrink:0;
+  }
+  .stat{
+    background:var(--cream);
+    border:1px solid var(--paper-line);
+    border-radius:10px;
+    padding:10px 12px;
+    min-width:0;
+  }
+  .stat .v{
+    font-family:'IBM Plex Mono', var(--fallback-mono);
+    font-weight:600;
+    font-size:15.5px;
+    color:var(--text);
+    display:flex;
+    align-items:baseline;
+    gap:5px;
+    flex-wrap:wrap;
+    overflow-wrap:break-word;
+    word-break:break-word;
+  }
+  .stat .v.up{ color:#2c6e49; }
+  .stat .v.down{ color:var(--brick); }
+  .stat .l{
+    font-size:11px;
+    color:var(--text-dim);
+    margin-top:3px;
+    line-height:1.3;
+    overflow-wrap:break-word;
+  }
+
+  .source{
+    font-family:'IBM Plex Mono', var(--fallback-mono);
+    font-size:10.5px;
+    color:var(--text-dim);
+    margin-top:16px;
+    padding-top:10px;
+    border-top:1px dashed var(--paper-line);
+    flex-shrink:0;
+  }
+
+  .scrollcue{
+    position:sticky;
+    bottom:0;
+    left:0;
+    right:0;
+    height:28px;
+    margin-top:-28px;
+    background:linear-gradient(180deg, rgba(239,232,216,0) 0%, var(--paper) 78%);
+    pointer-events:none;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    padding-bottom:5px;
+  }
+  .scrollcue svg{ width:14px; height:14px; opacity:0.4; color:var(--text-dim); }
+  .cardscroll.at-bottom .scrollcue{ display:none; }
+
+  .progressrow{
+    width:100%;
+    max-width:480px;
+    display:flex;
+    justify-content:center;
+    gap:5px;
+    padding:14px 4px 4px;
+    flex-wrap:wrap;
+  }
+  .dot{
+    width:6px; height:6px; border-radius:50%;
+    background:#3c4d45;
+    cursor:pointer;
+    transition: background .2s, transform .2s;
+  }
+  .dot.done{ background:var(--ochre); }
+  .dot.now{ background:var(--cream-fixed); transform:scale(1.4); }
+
+  .hint{
+    text-align:center;
+    font-family:'IBM Plex Mono', var(--fallback-mono);
+    font-size:10.5px;
+    color:#7d8a80;
+    padding-top:10px;
+    letter-spacing:0.02em;
+  }
+
+  :focus-visible{ outline:2px solid var(--ochre); outline-offset:2px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-row">
+      <div class="brand">Finance<span class="ledger">Ledger.</span></div>
+      <div class="brand-badge">DAILY</div>
+    </div>
+    <div class="topbar-right">
+      <div class="meta" id="metaTop">— · —</div>
+      <button class="fsbtn" id="fsBtn" type="button" aria-label="Enter fullscreen" title="Fullscreen">
+        <svg id="fsIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="8 3 3 3 3 8"></polyline>
+          <polyline points="16 3 21 3 21 8"></polyline>
+          <polyline points="3 16 3 21 8 21"></polyline>
+          <polyline points="21 16 21 21 16 21"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="update-banner" id="updateBanner">
+    <span>✦ New stories are up — tap to refresh</span>
+    <div class="update-banner-actions">
+      <button id="updateBannerRefresh" type="button">Refresh</button>
+      <button id="updateBannerDismiss" type="button" aria-label="Dismiss">✕</button>
+    </div>
+  </div>
+
+  <div class="datepicker" id="datePicker">
+    <select class="dateselect" id="yearSelect" aria-label="Year"></select>
+    <select class="dateselect" id="monthSelect" aria-label="Month"></select>
+    <select class="dateselect" id="daySelect" aria-label="Day"></select>
+  </div>
+
+  <div class="stage">
+    <div class="navzone" id="prevZone" aria-label="Previous story" role="button" tabindex="0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </div>
+    <div class="cardwrap" id="cardwrap">
+      <div class="pull-indicator" id="pullIndicator">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="1 4 1 10 7 10"></polyline>
+          <polyline points="23 20 23 14 17 14"></polyline>
+          <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+        </svg>
+      </div>
+    </div>
+    <div class="navzone" id="nextZone" aria-label="Next story" role="button" tabindex="0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </div>
+  </div>
+
+  <div class="progressrow" id="progressRow"></div>
+  <div class="hint">scroll a card to read in full · swipe or tap the edges for the next story</div>
+</div>
+
+<script>
+/* ============================================================
+   LEDGER — data layer
+   Every new newspaper upload adds ONE new entry to NEWS_BY_DATE
+   below, keyed "YYYY-MM-DD", containing that day's simplified
+   finance stories in the same {tag, headline, body, stats,
+   source} shape used here. Never edit or remove a past date's
+   entry — just add the next one. The date-chip row at the top
+   of the page is generated automatically from these keys, and
+   selecting a date shows only that day's stories.
+   ============================================================ */
+const NEWS_BY_DATE = {
+  "2026-06-09": {
+    label: "09 Jun 2026",
+    stories: [
+  {
+    tag: "Markets",
+    headline: "War jitters in the Middle East just gave Indian markets their worst day in weeks",
+    body: [
+      "The Nifty 50 — the index that tracks India's 50 biggest listed companies and is the most-watched barometer of the stock market's health — fell 1.04% on Monday to close at 23,123 points. The trigger was news that Israel and Iran had traded missile fire for the first time since a U.S.-brokered ceasefire in April, reviving fears of a wider war in West Asia.",
+      "The connection between a war thousands of kilometres away and Indian stock prices runs through oil. West Asia supplies a huge share of the world's crude, so any threat of conflict there tends to push oil prices up — and India imports about 85% of the oil it uses, so costlier crude usually means a costlier economy at home. On Monday, Brent crude (the global oil-price benchmark) rose to $94.38 a barrel, from about $93 on Friday.",
+      "The damage on Dalal Street was broad: 20 of the Nifty's 21 sector indices fell, with only healthcare stocks bucking the trend. Adding to the pressure, foreign institutional investors (FIIs) — big overseas funds that buy and sell Indian shares — sold a net ₹51,000 crore worth of Indian stocks in just the first week of June. When foreign money leaves this fast, it also weakens the rupee, which slid to 95.61 against the U.S. dollar."
+    ],
+    stats: [
+      {v:"23,123", down:true, l:"Nifty 50 close, down 1.04% on the day"},
+      {v:"$94.38", up:true, l:"Brent crude oil price, per barrel"},
+      {v:"₹51,000cr", l:"Foreign investors' net selling of Indian stocks, week of June 1"},
+      {v:"₹95.61", down:true, l:"Rupee's exchange rate against the US dollar"}
+    ],
+    source: "The Hindu · Business"
+  },
+  {
+    tag: "Energy",
+    headline: "Delhi just made subsidised LPG cylinders scarcer for poor households — even as fuel firms lose money on every litre they sell",
+    body: [
+      "The Pradhan Mantri Ujjwala Yojana (PMUY) is the government's flagship scheme that gives free gas connections to poor households and then subsidises the cost of refilling their cooking-gas cylinders — about 10.55 crore households are covered. Until now, each household could get nine subsidised refills a year. The Petroleum Ministry has quietly cut that to just four, citing pressure on global LPG supplies from the war in West Asia.",
+      "The subsidy math shows why the cut matters: a domestic cylinder costs ₹942 in Delhi, but a PMUY household pays only ₹642 thanks to a ₹300-per-cylinder government subsidy — a discount of about 60% versus what a cylinder would cost at full international pricing (which officials put closer to ₹1,600). A PMUY family typically uses four to five cylinders a year for cooking, so the cut to four refills could leave many of them short, especially in months when they need more.",
+      "Meanwhile, the companies that actually sell the fuel are losing money on it. State-run oil marketing companies are absorbing an 'under-recovery' — the gap between what it costs them to supply the fuel and what they're allowed to charge at the pump — of about ₹30 on every litre of diesel and ₹6 on every litre of petrol sold, according to a senior Petroleum Ministry official. In effect, the government is choosing to shield consumers from the full spike in global fuel costs, while both its subsidy budget and its state oil companies absorb the strain."
+    ],
+    stats: [
+      {v:"9 → 4", down:true, l:"Subsidised LPG refills per year under Ujjwala"},
+      {v:"₹642", l:"Price a PMUY household pays per cylinder, vs. ₹942 market price"},
+      {v:"₹30/litre", l:"Loss state oil firms take on every litre of diesel sold"},
+      {v:"₹6/litre", l:"Loss state oil firms take on every litre of petrol sold"}
+    ],
+    source: "The Hindu · Business"
+  },
+  {
+    tag: "Auto",
+    headline: "India's showrooms just had their best May ever — despite a heatwave and rising fuel prices",
+    body: [
+      "Automakers usually report 'wholesale' numbers — how many vehicles they shipped to dealers — but the Federation of Automobile Dealers Associations (FADA) tracks something more telling: 'retail' sales, meaning vehicles that customers actually drove out of showrooms. By that measure, May 2026 was the best May on record, with 25.31 lakh (2.53 million) vehicles retailed across India — up 9.55% from a year earlier.",
+      "Passenger vehicles (cars and SUVs) led the charge, up 23.25% to a record 4.02 lakh units for the month. Two-wheelers grew a more modest 7.54%, while tractors — often a proxy for how rural, farm-dependent India is feeling — rose 11.17%. Commercial vehicles and three-wheelers posted smaller single-digit gains.",
+      "The one soft spot: compared with April, overall retail sales actually dipped 6.75%. Industry body FADA attributed this to the usual post-tax-season cooldown and a delayed monsoon, which tends to make rural buyers — a big chunk of two-wheeler and tractor demand — hold off on big purchases until the rains, and the income they bring, arrive."
+    ],
+    stats: [
+      {v:"25.31 lakh", up:true, l:"Vehicles retailed in May, +9.55% year-on-year"},
+      {v:"4.02 lakh", up:true, l:"Passenger vehicles sold — a new May record"},
+      {v:"+23.25%", up:true, l:"Growth in passenger vehicle sales, year-on-year"},
+      {v:"-6.75%", down:true, l:"Dip in sales compared with the previous month"}
+    ],
+    source: "The Hindu · Business"
+  },
+  {
+    tag: "Solar",
+    headline: "Solar developers just took the government to court over a rule that could make panels far pricier",
+    body: [
+      "India's solar-panel makers have long been required to use only government-approved manufacturers when assembling panels. From June 1, that rule tightened one level deeper: most new solar projects must now also use solar cells — the light-absorbing components that actually generate electricity inside a panel — made only by companies on a similar approved list, rather than importing cheaper cells from abroad, mainly China.",
+      "The problem, say solar industry bodies from Karnataka, Kerala and Tamil Nadu who have petitioned the Karnataka High Court, is price: domestically made cells sell for around ₹13 a watt, versus roughly ₹5 a watt for imported ones — more than double. They argue India simply doesn't make enough cells yet to meet demand: the country's cell-manufacturing capacity is only around 27 gigawatts (GW), even though its capacity to assemble finished panels has already reached about 210 GW. They want the rule's enforcement deferred by at least a year.",
+      "The petitioners also flagged who stands to gain: by their estimate, at current price gaps only four or five companies hold the 'high-efficiency' cell-making licences needed to qualify, and together they could pocket an extra ₹24,000 crore a year once the rule kicks in — a cost that ultimately gets passed on to solar-project developers, and potentially to electricity prices more broadly. The government's counter-argument is that shielding domestic cell-makers from cheaper imports is necessary to build up India's own manufacturing base, rather than remaining permanently reliant on Chinese supply."
+    ],
+    stats: [
+      {v:"₹5 → ₹13/watt", up:true, l:"Price gap: imported vs. domestically made solar cells"},
+      {v:"27 GW", l:"India's current solar-cell manufacturing capacity"},
+      {v:"210 GW", l:"India's solar panel-assembly capacity, by comparison"},
+      {v:"₹24,000cr/yr", l:"Estimated extra revenue for local cell-makers, once enforced"}
+    ],
+    source: "The Hindu · Business"
+  },
+  {
+    tag: "Trade",
+    headline: "India just signed a trade deal with Oman that removes tariffs on 98% of its exports",
+    body: [
+      "The India-Oman Comprehensive Economic Partnership Agreement (CEPA) — essentially a broad free-trade deal covering goods, services and investment — came into force on June 1, 2026. Under it, Oman now offers duty-free access on 98.08% of its tariff categories, which together cover 99.38% of everything India actually exports there by value. Before the deal, only about 15.33% of India's exports to Oman entered duty-free.",
+      "The sectors expected to benefit most are ones where India already has a foothold: textiles and apparel (India already supplies 43% of Oman's imported woven clothing), chemicals (nearly 39% of Oman's inorganic-chemical imports), and engineering goods, where Indian exporters currently hold only a 2-5% share of a market worth billions of dollars a year — leaving plenty of room to grow once tariffs disappear. For pharmaceuticals, the bigger win isn't tariffs but faster regulatory approvals, letting Indian-made, internationally-approved drugs enter the Omani market more quickly.",
+      "Bilateral trade between the two countries has grown from $8.94 billion in 2023-24 to $11.18 billion in 2025-26. Beyond the trade numbers, Oman's location matters strategically: its ports at Sohar, Duqm and Salalah sit along some of the world's busiest shipping lanes, giving Indian businesses a potential gateway to the wider Gulf region and East Africa, not just to Oman itself."
+    ],
+    stats: [
+      {v:"98.08%", up:true, l:"Share of Oman's tariff lines now duty-free for India"},
+      {v:"$11.18bn", up:true, l:"India-Oman bilateral trade, FY2025-26"},
+      {v:"15.33% → 99.38%", up:true, l:"Share of India's exports to Oman entering duty-free"},
+      {v:"$447mn", l:"India's trade surplus with Oman in services, 2024"}
+    ],
+    source: "The Hindu · Editorial/Business"
+  },
+  {
+    tag: "Deals",
+    headline: "TCS lands a multi-year, multimillion-euro deal to modernise a Canadian insurer's tech",
+    body: [
+      "Tata Consultancy Services (TCS), India's largest IT services company, has signed a multi-year transformation and IT-management agreement with Canada Life, a Canadian life-insurance and pensions company, for an undisclosed sum described only as 'multimillion euros'.",
+      "Under the deal, TCS will modernise Canada Life's technology backbone across its European operations — its data centres, core computing infrastructure, employee IT systems, and the software tools it relies on day to day — using artificial intelligence and other digital tools. The stated goal is to cut costs, improve performance and free up Canada Life to focus on its insurance business rather than running its own tech plumbing.",
+      "Deals like this are a familiar playbook for Indian IT firms: large global financial companies, especially insurers and banks with ageing legacy systems, outsource the unglamorous but expensive work of running and upgrading their technology to firms like TCS, Infosys or Wipro, who can do it more cheaply and, increasingly, use AI to further cut the cost of that work."
+    ],
+    stats: [
+      {v:"Multi-year", l:"Duration of the TCS-Canada Life contract"},
+      {v:"Multimillion €", l:"Deal value (exact figure undisclosed)"}
+    ],
+    source: "The Hindu · Business"
+  },
+  {
+    tag: "Corporate",
+    headline: "A ₹18,000 crore shipyard project just got pulled from Tamil Nadu — Mazagon Dock wants Andhra Pradesh instead",
+    body: [
+      "Mazagon Dock Limited (MDL), India's top state-run shipbuilder, had signed an agreement with the Tamil Nadu government in September 2025 to build a massive shipbuilding cluster at Thoothukudi, with a stated investment of ₹15,000-18,000 crore. The plan was to build a facility capable of constructing Very Large Crude Carriers (VLCCs) — tankers big enough to carry up to 3 lakh tonnes of crude oil at once, a class of ship India currently has almost no capacity to build domestically.",
+      "But in December 2025, Tamil Nadu instead signed an 'Exclusive Business Cooperation Agreement' for the same Thoothukudi site with South Korea's HD Hyundai, describing it as a plan for a 'second Ulsan' (Hyundai's giant home shipyard) worth an estimated $2-4 billion. MDL says the state's own rulebook for approving such projects — including forming a joint-venture company to run the selection process — was only finalised weeks after HD Hyundai had already been picked, raising questions about whether Indian companies were denied a fair chance to bid.",
+      "Having been effectively squeezed out of Tamil Nadu, MDL is now proposing to invest over ₹29,000 crore in Andhra Pradesh instead, aiming to become the anchor investor in a new 1.2-million-tonne shipbuilding cluster there. The episode comes as the Centre pushes its 'Maritime Amrit Kaal Vision 2047' plan to make India self-reliant in shipbuilding — and has drawn attention to how transparently big state-backed infrastructure projects are actually being awarded."
+    ],
+    stats: [
+      {v:"₹29,000cr", up:true, l:"MDL's newly proposed investment — now aimed at Andhra Pradesh"},
+      {v:"₹15,000-18,000cr", l:"Original Tamil Nadu shipyard commitment, now shelved"},
+      {v:"$2-4bn", l:"Value of the rival deal Tamil Nadu struck with South Korea's HD Hyundai"},
+      {v:"1.2mn tonnes", l:"Planned annual shipbuilding capacity of the new A.P. cluster"}
+    ],
+    source: "The Hindu · Business"
+  },
+  {
+    tag: "Macro",
+    headline: "India ran a rare current-account surplus last quarter — but the full year still ended in deficit",
+    body: [
+      "The current account is the broadest scorecard of money flowing into and out of a country — covering trade in goods and services, income from investments, and remittances sent home by workers abroad. India typically runs a deficit here, since it imports far more (oil and gold, especially) than it exports.",
+      "For once, that flipped in the January-March quarter of FY26: India posted a current account surplus of $7.1 billion, or 1.4% of GDP, helped along by strong exports of computer and business services — the kind of white-collar, IT-driven exports that have quietly become one of India's biggest economic strengths.",
+      "That one good quarter wasn't enough to erase the earlier part of the year, though. For the full 2025-26 financial year, India still ended with a current account deficit of $25.2 billion (0.6% of GDP) — roughly in line with the $22.9 billion deficit the year before. The takeaway: a services-driven surplus can show up in a single quarter, but India's underlying trade gap, largely from oil imports, hasn't gone away."
+    ],
+    stats: [
+      {v:"$7.1bn", up:true, l:"India's current account surplus, Jan-Mar quarter of FY26"},
+      {v:"1.4%", l:"That surplus, as a share of GDP"},
+      {v:"$25.2bn", down:true, l:"Full-year FY26 current account deficit"}
+    ],
+    source: "The Hindu · Text & Context"
+  }
+    ]
+  },
+  "2026-07-08": {
+    label: "08 Jul 2026",
+    stories: [
+  {
+    tag: "Ownership",
+    headline: "Swiggy is now officially classified as an Indian-owned and controlled company",
+    body: [
+      "Swiggy has been classified as an Indian Owned and Controlled Company (IOCC) after the combined holdings of foreign direct investors, foreign portfolio investors and other foreign investors fell to 49.76% of its fully diluted paid-up equity capital.",
+      "The classification matters under India's foreign-exchange rules because the foreign ownership level has moved below the 50% threshold. Swiggy said the change does not by itself alter the company's ownership or control structure, share capital, management, business operations, voting rights or other rights attached to its shares.",
+      "For investors, the development is mainly about the regulatory classification of the company rather than an immediate change to how Swiggy operates. It also shows how changes in foreign investor stakes can affect a listed Indian company's status under FEMA rules."
+    ],
+    stats: [
+      {v:"49.76%", down:true, l:"Foreign investor share of Swiggy's fully diluted equity"},
+      {v:"<50%", l:"Threshold below which the company qualifies as Indian-owned and controlled"}
+    ],
+    source: "The Hindu · Business"
+  },
+  {
+    tag: "Auto",
+    headline: "Mercedes-Benz India starts the second half of 2026 with sales up 9%",
+    body: [
+      "Mercedes-Benz India retailed 9,768 vehicles in the first half of calendar 2026, up 9% from the same period a year earlier. Sales in the April-June quarter reached 4,637 units, a 10% year-on-year increase.",
+      "The company attributed the performance to its new and existing products, network upgrades and customer experience. It entered the second half of the year with an order book of around 2,000 cars, giving it a visible pipeline of demand beyond the vehicles already delivered.",
+      "The figures are retail sales, meaning vehicles delivered to customers, and therefore provide a direct indication of demand for the company's premium vehicles in India during the first half of the year."
+    ],
+    stats: [
+      {v:"9,768", up:true, l:"Mercedes-Benz India H1 CY2026 retail sales"},
+      {v:"+9%", up:true, l:"H1 sales growth year-on-year"},
+      {v:"4,637", up:true, l:"Q2 CY2026 retail sales"},
+      {v:"~2,000", l:"Cars in the order book entering H2"}
+    ],
+    source: "The Hindu · Business"
+  },
+  {
+    tag: "Banking",
+    headline: "IDFC First Bank links EPFO payments directly to its internet-banking platforms",
+    body: [
+      "IDFC First Bank has launched provident-fund payment services through an integration with the Employees' Provident Fund Organisation (EPFO). Employers can initiate PF payments through the EPFO portal and complete the transaction using the bank's retail or corporate internet-banking platforms.",
+      "The service is aimed at making statutory provident-fund payments more directly accessible through existing banking infrastructure. For employers, the practical change is a more integrated payment flow between the EPFO portal and their bank account."
+    ],
+    stats: [
+      {v:"EPFO", l:"Provident-fund platform integrated with the bank"},
+      {v:"2", l:"Retail and corporate internet-banking channels supported"}
+    ],
+    source: "The Hindu · Business"
+  },
+  {
+    tag: "Healthcare",
+    headline: "Reliance's Strand Life Sciences gets an Indian patent for blood-based cancer detection",
+    body: [
+      "Strand Life Sciences, the Bengaluru-based subsidiary of Reliance Industries, has received an Indian patent covering a platform for early cancer detection using cell-free DNA, or cfDNA, analysis from a blood sample.",
+      "The technology looks for widespread methylation-pattern changes across the genome, which can act as signals associated with cancer. The company says the platform is designed to detect cancer earlier using a blood test rather than relying only on conventional tissue-based approaches.",
+      "The development is notable because early detection can materially affect treatment options and outcomes, while blood-based testing is an area where genomics companies are investing heavily."
+    ],
+    stats: [
+      {v:"1", up:true, l:"Indian patent granted to Strand for the platform"},
+      {v:"cfDNA", l:"Cell-free DNA used in the blood-based analysis"},
+      {v:">1.5mn", l:"Estimated new cancer cases globally each year, as cited in the report"}
+    ],
+    source: "The Hindu · Business"
+  },
+  {
+    tag: "Stocks",
+    headline: "Trent shares fall more than 12% after June-quarter revenue growth misses expectations",
+    body: [
+      "Shares of Tata Group retail company Trent fell 12.4% on Tuesday to close at ₹2,928.05 on the BSE after the company's June-quarter revenue growth came in below market expectations.",
+      "The stock touched an intraday low of ₹2,919, a fall of about 12.7%. On the NSE, it also ended 12.4% lower at ₹2,927.80.",
+      "The reaction shows how strongly listed retail companies can move when quarterly growth does not match the pace investors had priced into the stock. Trent's business includes retail formats such as Westside and Zudio, making quarterly sales growth an important market indicator."
+    ],
+    stats: [
+      {v:"-12.4%", down:true, l:"Trent share-price move on the BSE"},
+      {v:"₹2,928.05", down:true, l:"BSE closing price"},
+      {v:"₹2,919", down:true, l:"Intraday low"}
+    ],
+    source: "The Hindu · Business"
+  },
+  {
+    tag: "FDI",
+    headline: "Foreign direct investment into India rose 44% to $39 billion in 2025",
+    body: [
+      "Foreign direct investment inflows into India increased 44% in 2025 to $39 billion, according to United Nations data cited by The Hindu. The rise came even as global FDI flows increased more modestly overall.",
+      "The UN said global FDI flows rose 6% to $1.6 trillion, with inflows increasing 11% in developed economies and 2% in developing economies. India's faster growth in inflows therefore stood out within the broader developing-economy picture.",
+      "FDI matters because it brings long-term foreign capital into businesses and projects, and can also bring technology, management expertise and access to global supply chains."
+    ],
+    stats: [
+      {v:"$39bn", up:true, l:"FDI inflows into India in 2025"},
+      {v:"+44%", up:true, l:"Year-on-year increase in India's FDI inflows"},
+      {v:"$1.6tn", up:true, l:"Global FDI flows in 2025"}
+    ],
+    source: "The Hindu · Data Team / PTI"
+  },
+  {
+    tag: "Energy",
+    headline: "India lifts emergency natural-gas supply curbs after the West Asia crisis eases",
+    body: [
+      "The government lifted emergency restrictions on natural-gas supplies on July 4, citing the ceasefire and negotiations in West Asia and the resumption of sea traffic through the Strait of Hormuz.",
+      "The restrictions had been imposed during the crisis to manage gas availability. Their removal is expected to help refineries, city-gas distributors and gas-intensive industries such as ceramics, which need reliable supplies at affordable prices.",
+      "The episode also highlighted India's exposure to imported energy and the importance of diversifying supply sources, expanding storage and building resilience around critical fuel infrastructure."
+    ],
+    stats: [
+      {v:"4 Jul", l:"Date emergency gas curbs were lifted"},
+      {v:"Hormuz", l:"Key shipping route whose reopening supported the decision"},
+      {v:"~30%", l:"Share of natural-gas use going into fertiliser production, according to the report"}
+    ],
+    source: "The Hindu · Text & Context"
+  },
+  {
+    tag: "Trade",
+    headline: "India and Australia aim to push bilateral trade toward $100 billion by 2030",
+    body: [
+      "India-Australia economic ties have expanded under the Economic Cooperation and Trade Agreement. The arrangement gives Indian exports duty-free access to Australia, benefiting sectors such as textiles, pharmaceuticals, chemicals, engineering goods, gems and jewellery.",
+      "Australia receives preferential access for products including critical minerals, resources, wool, avocados and macadamia. Bilateral trade was about $33 billion in 2025, and both countries have expressed an ambition to raise that figure toward $100 billion by 2030.",
+      "Two-way cumulative investment is approaching $50 billion, making the relationship relevant not only for merchandise trade but also for capital flows and access to strategic resources."
+    ],
+    stats: [
+      {v:"$33bn", l:"Approximate bilateral trade in 2025"},
+      {v:"$100bn", up:true, l:"Shared trade ambition for 2030"},
+      {v:"~$50bn", l:"Approximate cumulative two-way investment"}
+    ],
+    source: "The Hindu · Business / Text & Context"
+  }
+    ]
+  },
+  "2026-09-24": {
+    label: "24 Sep 2026",
+    stories: [
+{
+    tag: "IPO",
+    headline: "After a decade of delays, India's own stock exchange finally listed itself today",
+    body: [
+      "There's something a little strange about a stock exchange selling shares of itself on that very exchange. Today it happened: the National Stock Exchange (NSE) — the venue where most Indian share trading actually takes place — became a publicly listed company, ten years after it first tried.",
+      "The journey was rocky. NSE first filed to go public back in 2016, but a scandal over unfair high-speed trading access (the 'co-location case') got it penalized and barred from raising funds for six months. It took until this September for regulators to finally clear the way, and even then the ₹22,569 crore share sale — India's second-biggest ever, after Hyundai Motor India's ₹27,859 crore listing in 2024 — landed with more of a shrug than a bang.",
+      "Big institutional investors like banks, mutual funds and insurers were enthusiastic, bidding for nearly 12.7 times the shares set aside for them. But the unofficial 'grey market premium' — essentially a betting-market guess at how much the stock will pop on debut — collapsed from 21% at the start of bidding to just 2% by the end, as investors grew wary of the price NSE was asking. Analysts now expect the stock to list at only a modest 4-5% premium.",
+      "One reason retail investors stayed cautious: every single share on offer belonged to existing shareholders cashing out. NSE itself isn't raising any fresh money from this listing, so there's no new capital going into growing the exchange — often a reassuring signal for first-time buyers that a company is investing in its own future."
+    ],
+    stats: [
+      {v:"₹22,569cr", l:"Size of NSE's IPO — India's 2nd-largest ever"},
+      {v:"12.7x", up:true, l:"Demand from big institutional investors"},
+      {v:"21%→2%", down:true, l:"Grey-market premium, start to end of bidding"},
+      {v:"₹10,302cr", l:"NSE's net profit in FY26"}
+    ],
+    source: "Mint · Front Page"
+  },
+{
+    tag: "Markets",
+    headline: "India still tops the emerging-market league table — but the gap is narrowing",
+    body: [
+      "Every month, Mint runs a scorecard comparing India against 11 other big emerging economies — Vietnam, China, Brazil and others — on seven measures like GDP growth, inflation and how the stock market is doing. For August, India held on to first place, just ahead of Vietnam and Malaysia.",
+      "The strong points were familiar: the economy grew 7.8% in the April-June quarter, comfortably beating expectations even with a war in West Asia rattling oil markets, and exports surged 26% year-on-year, among the fastest of any country tracked. The RBI's special deposit scheme for non-resident Indians also helped fatten the country's foreign-currency reserves, pushing 'import cover' — essentially, how many months of imports the country could pay for using its reserves alone — up to 10.8 months.",
+      "But India lagged on the metrics that matter most to ordinary savers and investors. Retail inflation, at 4.8%, sits 80 basis points above the RBI's own 4% target, worse than peers like Malaysia and Mexico. And while Indian stocks did better than in recent months, the market's value grew just 2.7% in August — slower than Indonesia, South Africa and China, which each posted gains of 2.9-3.3%.",
+      "The bigger worry is what comes next. A weak monsoon, an expected string of RBI interest-rate hikes, and rising bond yields in the US are all pressures building at once — several of which showed up clearly in the days right after this scorecard was compiled."
+    ],
+    stats: [
+      {v:"72.9", up:true, l:"India's composite score — still No. 1"},
+      {v:"7.8%", up:true, l:"GDP growth, April-June quarter"},
+      {v:"4.8%", down:true, l:"Retail inflation — above RBI's 4% target"},
+      {v:"2.7%", l:"India's stock-market growth in August (peers: up to 3.3%)"}
+    ],
+    source: "Mint · Plain Facts"
+  },
+{
+    tag: "Markets",
+    headline: "Foreign investors keep pulling money out of Indian stocks — and now bonds are feeling it too",
+    body: [
+      "Foreign investors sold another ₹19,828 crore worth of Indian shares between 1 and 23 September, extending a selling streak that has now stretched across two months. It's the kind of steady outflow that tends to chip away at the market quietly rather than causing a single dramatic crash.",
+      "Part of the story is happening in the bond market. When you buy a government bond, the 'yield' is roughly the interest rate you're locking in — and right now, yields are climbing on both sides of the world. The US Federal Reserve raised interest rates by 25 basis points this month, pushing its benchmark 10-year yield toward 5%. India's own 10-year yield, at around 7%, is still higher, but the gap between the two has shrunk from about 2.5 percentage points back in February to roughly 2 points now — meaning Indian bonds look less uniquely rewarding to a foreign investor than they used to.",
+      "Layered on top of that is a stubborn inflation problem. This year's kharif (monsoon-season) crop sowing is running 1.5% behind last year, with rainfall about 23% below normal — a shortfall that could push food prices higher just as the India crude oil basket has jumped to $114.8 a barrel in September from $90 in August, thanks to the war in West Asia.",
+      "Put together, economists now expect the RBI to start raising interest rates as early as next month, with cumulative hikes of around 100 basis points possible by next year — a reversal after a long stretch of rate cuts, and one that would mark a real shift in how expensive it is to borrow money in India."
+    ],
+    stats: [
+      {v:"₹19,828cr", down:true, l:"Foreign investors' net stock sell-off, 1-23 Sept"},
+      {v:"~7%", up:true, l:"India's 10-year government bond yield"},
+      {v:"~5%", up:true, l:"US 10-year Treasury yield, after the Fed's latest hike"},
+      {v:"$114.8", up:true, l:"India's crude oil basket price per barrel (from $90)"}
+    ],
+    source: "Mint · Plain Facts"
+  },
+{
+    tag: "Macro",
+    headline: "Five different global agencies just raised their bets on India's economy — all in the same fortnight",
+    body: [
+      "It's rare for global forecasters to move in near-lockstep, but that's what's happened with India this month. Fitch Ratings raised its growth forecast for the 2026-27 financial year to 6.9%, from 6.4%. S&P Global Ratings went further, lifting its call to 7% from 6.6%. Moody's had already bumped its own forecast up to 7% the week before.",
+      "Two more joined in on Wednesday: the OECD (a club of mostly wealthy economies that tracks the global outlook) raised its India forecast to 7.1% from 6.3%, while the Asian Development Bank moved to 7% from 6.6%. That makes it a clean sweep of five major agencies revising India upward within a couple of weeks — an unusually strong show of confidence given the backdrop of an oil-price shock from the West Asia war.",
+      "The reasoning is fairly consistent across the reports: resilient domestic consumption, a pickup in private investment, and steady government infrastructure spending are all offsetting the drag from costlier oil and lingering uncertainty over US tariffs. The OECD specifically flagged AI-related investment and improving farm productivity as tailwinds worth watching.",
+      "None of the agencies are pretending it's smooth sailing ahead, though. Most expect growth to cool in the second half of the financial year as the tailwinds from this year's tax cuts and GST changes fade, with the OECD projecting a slowdown to 6.5% by FY28. For now, though, India remains everyone's pick for the world's fastest-growing major economy."
+    ],
+    stats: [
+      {v:"7.1%", up:true, l:"OECD's new FY27 growth forecast (from 6.3%)"},
+      {v:"7.0%", up:true, l:"S&P's & ADB's new forecast (from 6.6%)"},
+      {v:"6.9%", up:true, l:"Fitch's new forecast (from 6.4%)"},
+      {v:"6.5%", down:true, l:"OECD's projected FY28 slowdown"}
+    ],
+    source: "Mint · Economy & Policy"
+  },
+{
+    tag: "Macro",
+    headline: "India's factories and services just had their best month in a while",
+    body: [
+      "A widely watched monthly health-check on the Indian economy just posted its strongest reading in three months. The HSBC Flash India Composite PMI — a survey-based index tracking whether business activity across manufacturing and services is expanding or shrinking — rose to 56.5 in September from 54.3 in August. Any reading above 50 signals growth, so this is a fairly emphatic 'yes, business is picking up.'",
+      "Manufacturing alone hit 55.7, a seven-month high, while services activity edged up to 55.8. Companies surveyed pointed to strengthening demand as the main driver, with new orders for properties, transport services and travel bookings all cited as bright spots — even as growth in export orders slowed a touch, likely reflecting the drag from US tariffs and global uncertainty.",
+      "This kind of survey data matters because it's one of the earliest signals of how the economy is really doing, arriving weeks before official GDP figures. Business confidence about the year ahead also strengthened to a four-month high, suggesting companies expect this momentum to continue rather than fade — a reassuring sign given the inflationary pressures building elsewhere in the economy this month."
+    ],
+    stats: [
+      {v:"56.5", up:true, l:"Composite PMI — 3-month high (from 54.3)"},
+      {v:"55.7", up:true, l:"Manufacturing PMI — 7-month high"},
+      {v:"55.8", up:true, l:"Services PMI Business Activity Index"},
+      {v:">50", l:"Any reading above this means growth, not contraction"}
+    ],
+    source: "Mint · Economy & Policy"
+  },
+{
+    tag: "Deals",
+    headline: "A Canadian investor just doubled its money exiting an Indian solar company — while the company used the cash to pay off debt",
+    body: [
+      "Avaada Ventures, a clean-energy group, has repaid roughly ₹6,713 crore of debt it owed to Brookfield Renewable — and in doing so, handed the Canadian investment giant a clean exit worth almost exactly double what it had put in.",
+      "Brookfield had originally invested ₹3,290 crore in Avaada through convertible debentures (a kind of loan that can later be converted into equity) back in 2023, as part of a broader commitment to invest up to $1 billion in the company. In the end, only a fraction of that full commitment — about $400 million — was actually invested. Brookfield chose not to convert its debentures into shares, taking the cash repayment instead: roughly a 2x return on its money.",
+      "The timing isn't a coincidence. This repayment comes just ahead of a ₹7,600 crore initial public offering (IPO) planned by an affiliated company, Avaada Electro Ltd, which intends to raise ₹1,600 crore in fresh capital while the promoter group sells another ₹6,000 crore worth of existing shares. Clearing the balance sheet of debt tends to make a company more attractive to IPO investors.",
+      "For Brookfield, this adds to a growing list of profitable exits from Indian renewable-energy bets, at a moment when global investors are increasingly cashing in on India's clean-energy buildout rather than just funding it."
+    ],
+    stats: [
+      {v:"₹6,713cr", up:true, l:"Amount Brookfield recovered — about 2x its investment"},
+      {v:"₹3,290cr", l:"Brookfield's original investment in Avaada"},
+      {v:"$1bn", l:"Brookfield's total committed investment ceiling (only ~$400mn used)"},
+      {v:"₹7,600cr", l:"Size of the upcoming Avaada Electro IPO"}
+    ],
+    source: "Mint · Front Page"
+  },
+{
+    tag: "Consumer tech",
+    headline: "Everyone else's laptop sales are falling. Apple's MacBooks are having their best year yet in India",
+    body: [
+      "India's overall laptop market is shrinking this quarter — sales to consumers are down by a double-digit percentage. Apple's MacBooks are moving in the opposite direction entirely: sales jumped 89% year-on-year in the June quarter, and the company is on track to sell close to one million MacBook units in India this calendar year for the first time ever.",
+      "To put that growth in context, Apple's share of India's laptop market has climbed from under 4% at the start of 2025 to roughly 7% now — a rare case of a premium brand actually gaining ground while the broader market contracts. Independent research firm IDC projects total Indian laptop sales of 14-15 million units this year, with a further boost expected in the second half as festive-season demand kicks in.",
+      "The MacBook Neo, in particular, has been singled out as the standout performer within Apple's lineup. It reflects a broader pattern playing out globally: as memory-chip prices climb (driven up by the AI boom's hunger for chips), device makers everywhere are leaning into premium, higher-margin products rather than chasing volume in the budget segment — and Apple, already positioned at the top end, is one of the biggest beneficiaries of that shift in India."
+    ],
+    stats: [
+      {v:"+89%", up:true, l:"MacBook sales growth in India, year-on-year (Q1)"},
+      {v:"~1 million", up:true, l:"MacBook units Apple is on track to sell in India this year"},
+      {v:"~7%", up:true, l:"Apple's share of India's laptop market (from <4% in 2025)"},
+      {v:"14-15mn", l:"Total Indian laptop units expected to sell this year"}
+    ],
+    source: "Mint · Deals, Tech & Startups"
+  },
+{
+    tag: "Insurance",
+    headline: "India's insurance regulator wants to slash the commissions agents and banks earn on your policy",
+    body: [
+      "Buy a life or general insurance policy in India today, and a meaningful chunk of your premium doesn't go toward your coverage — it goes to whoever sold it to you, as a commission. The insurance regulator, Irdai, thinks that chunk is too big, and on Wednesday proposed a sweeping rulebook to shrink it.",
+      "The technical term for this pool of money is 'Expenses of Management,' or EoM — essentially, everything an insurer spends running the business, commissions included. Under the current 2023 rules, general insurers can spend up to 30% of gross premiums on EoM, and standalone health insurers up to 35%. Irdai's new proposal would force life insurers down to 15% within two years and 12.5% within five, while general insurers would need to reach 25% within two years and 20% within five.",
+      "The numbers behind the push are stark: in FY26, private life insurers paid an average commission of 9% of total premiums collected, while private general insurers paid more than 20% — a gap Irdai clearly sees as unjustified. The proposal also bans banks and NBFCs from compulsorily bundling insurance with loans, a practice that has long been a source of customer complaints.",
+      "If this goes through, the immediate losers are insurers and the banks/agents who distribute their products, who stand to earn meaningfully less per policy sold. The intended winner is the ordinary policyholder, who Irdai hopes will end up with cheaper premiums and more genuine choice, rather than being steered toward whichever product pays the seller the biggest commission."
+    ],
+    stats: [
+      {v:"15%", down:true, l:"New EoM cap for life insurers within 2 years (from 30%)"},
+      {v:"25%", down:true, l:"New EoM cap for general insurers within 2 years (from 30%)"},
+      {v:"9%", l:"Average commission private life insurers paid in FY26"},
+      {v:">20%", down:true, l:"Average commission private general insurers paid — the target"}
+    ],
+    source: "Mint · Economy & Policy"
+  },
+{
+    tag: "Listings",
+    headline: "Airtel's African mobile-money arm could pull off the biggest London listing in five years",
+    body: [
+      "Airtel Money, the fintech arm of Bharti Airtel's African business, has disclosed plans for what could be the largest new listing on the London Stock Exchange since global payments firm Wise debuted there at an $11 billion valuation back in July 2021.",
+      "The business itself is a quiet giant: it processed $213 billion worth of transactions in the twelve months to June 2026 across 13 sub-Saharan African countries, serving around 53 million monthly active users — a scale roughly equivalent to a tenth of the entire region's economic output, according to World Bank data. Its parent, Airtel Africa Plc, reported $1.35 billion in revenue and $373 million in profit for the last financial year.",
+      "Like several of the listings covered in this bulletin recently, this one won't raise any fresh money for the company itself — the listing is structured as an 'offer for sale,' meaning existing shareholders are simply selling their stakes to new investors, with the company itself pocketing nothing extra. Reports suggest Airtel Money is looking to raise at least $800 million at a valuation of $8-9 billion.",
+      "Management describes the business as debt-free and highly cash-generative, needing little external capital to keep growing — raising the question of why list at all. The likely answer, analysts say, is a contractual obligation to give existing minority investors a way to cash out, rather than any pressing need for the money itself."
+    ],
+    stats: [
+      {v:"$213bn", up:true, l:"Value of transactions processed in the past 12 months"},
+      {v:"53 million", l:"Monthly active users across 13 African countries"},
+      {v:"$8-9bn", up:true, l:"Valuation Airtel Money is reportedly seeking"},
+      {v:"$800mn", l:"Minimum amount it's looking to raise"}
+    ],
+    source: "Mint · Mark to Market"
+  },
+{
+    tag: "Legal",
+    headline: "A Delhi court just ruled that foreign sanctions can't automatically override an Indian company's contracts",
+    body: [
+      "The Delhi High Court this week ordered German software giant SAP's Indian arm to restore services to Nayara Energy, an oil refiner that had its support suspended for over a year — not because of anything Nayara did wrong in India, but because the European Union had sanctioned Nayara over its Russian ownership links.",
+      "Here's the backstory: Nayara's Vadinar refinery is 49%-owned by Russia's state oil company Rosneft. When the EU sanctioned Nayara in July 2025 over that link, SAP India suspended Nayara's software support, citing an obligation to comply with EU sanctions law through its German parent company. Nayara took SAP to court, arguing that its contract with SAP India was an agreement between two Indian companies, governed by Indian law — not EU law.",
+      "The court agreed, at least for now. It found SAP's defense — that continuing services could expose its German parent to criminal liability in Germany — not convincing on the facts presented, and noted that the order in question was against SAP's Indian entity specifically, which is bound by Indian contract law regardless of what its foreign parent is required to do elsewhere. SAP can still appeal to a larger bench of the court.",
+      "This matters well beyond one refiner and one software vendor. Indian companies increasingly depend on foreign technology providers for critical infrastructure — cloud services, enterprise software, communication tools — and this case is an early signal of how Indian courts may handle the next dispute where a foreign government's sanctions collide with a purely domestic contract. It's not blanket immunity from sanctions, legal experts caution, but it does mean foreign sanctions can't simply be assumed to override Indian law without being tested in an Indian court first."
+    ],
+    stats: [
+      {v:"24 Jul 2025", l:"Date SAP first suspended Nayara's services"},
+      {v:"49%", l:"Rosneft's (Russian) ownership stake in Nayara's refinery"},
+      {v:"21 Sep 2026", l:"Date of the Delhi HC's interim order to restore services"}
+    ],
+    source: "Mint · Front Page"
+  },
+  {
+    tag: "Private Equity",
+    headline: "Synechron holds talks with private-equity firms for a stake sale",
+    body: [
+      "Synechron, a bootstrapped global information-technology company, has started discussions with private-equity investors for a possible stake sale. Early discussions have involved EQT, CVC and Apax Partners, according to people cited by Mint.",
+      "The proposed transaction could range from a minority stake to a significant majority stake. Synechron is also evaluating a share-swap structure similar to some recent transactions in the IT-services sector. The company has crossed $1 billion in annual revenue and could seek a valuation of $3-3.5 billion or more, although the valuation and stake size are still being discussed.",
+      "Synechron itself said it plans to remain private and independent for the foreseeable future and that there are no strategic transactions on the horizon. That means the reported discussions should not be treated as a confirmed sale.",
+      "The story matters because India's mid-sized IT-services sector is attracting private-equity interest as companies try to build capabilities in AI, data and cloud and expand faster through acquisitions. Synechron serves more than 200 financial-services clients across technology and digital-transformation areas, making it an example of the kind of specialised IT business PE investors are looking at."
+    ],
+    stats: [
+      {v:"$1bn+", up:true, l:"Synechron annual revenue"},
+      {v:"$3-3.5bn+", l:"Reported possible valuation"},
+      {v:"16,000", l:"Employees globally"},
+      {v:"200+", l:"Financial-services clients"}
+    ],
+    source: "Mint · Deals, Tech & Startups"
+  },
+  {
+    tag: "Private Markets",
+    headline: "Kotak Alts raises a ₹5,000 crore fund from domestic investors",
+    body: [
+      "Kotak Alternate Asset Managers has announced the final close of the Kotak Yield & Growth Fund at ₹5,000 crore. The fund was raised entirely from domestic investors, including institutional investors, family offices and ultra-high-net-worth individuals across India.",
+      "The fund is a Category II alternative investment fund and will invest across private credit, real assets and selected growth opportunities. It is sector-agnostic and is intended to focus on cash-flow-generating businesses, real assets and mid- to large-sized companies with strong governance standards.",
+      "Private credit means lending to companies outside the traditional bank-loan channel, while real assets include areas such as infrastructure and property-linked assets. These strategies can provide investors with exposure to income-generating assets, but they also involve lower liquidity and deal-specific risks compared with listed securities.",
+      "The ₹5,000 crore fundraise is notable because it was sourced entirely from Indian capital rather than depending on overseas investors. It shows the growing role of domestic institutions, family offices and wealthy investors in India's alternative-asset market."
+    ],
+    stats: [
+      {v:"₹5,000cr", up:true, l:"Final fund size"},
+      {v:"100%", l:"Capital raised from domestic investors"},
+      {v:"Category II", l:"AIF classification"},
+      {v:"Private credit", l:"One of the target strategies"}
+    ],
+    source: "Mint · News Wrap"
+  },
+  {
+    tag: "Battery / EV",
+    headline: "Tata Tech's China unit steps up battery work for Agratas",
+    body: [
+      "Tata Technologies' Shanghai-based unit provided services worth ₹7.34 crore to Agratas Energy Storage Solutions in FY26 as the Tata group battery venture moves closer to commercial rollout. The work covers manufacturing-technology consulting, engineering, software and testing services.",
+      "The disclosure is significant because Agratas now has a clearer China link through Tata Technologies' Shanghai operations. Agratas also has a technology connection with AESC, which holds a 12% stake in the company, and bought sample cells worth ₹4.43 crore from AESC's Chinese subsidiary for battery development.",
+      "The relationship comes as Agratas builds a 40GWh battery plant in the UK and a 20GWh facility in India. It has also signed a ₹5,000 crore EV-battery supply agreement with Jaguar Land Rover for seven years starting in FY27.",
+      "The China connection highlights a wider challenge for India's battery industry: domestic cell manufacturing still relies heavily on Chinese and Korean technology and supply chains. For Agratas, working with that ecosystem can help accelerate development, but it also creates dependence at a time when China is tightening restrictions on technology transfers."
+    ],
+    stats: [
+      {v:"₹7.34cr", up:true, l:"FY26 services from Tata Tech Shanghai to Agratas"},
+      {v:"₹4.43cr", l:"AESC China sample cells purchased"},
+      {v:"40GWh", l:"Agratas UK battery plant"},
+      {v:"20GWh", l:"Agratas India battery facility"}
+    ],
+    source: "Mint · Corporate"
