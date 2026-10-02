@@ -5332,7 +5332,7 @@ function buildCard(item){
           ${item.body.map(p => `<p>${p}</p>`).join('')}
         </div>
         <div class="stats">
-          ${item.stats.map(s => `
+          ${(item.stats || []).map(s => `
             <div class="stat">
               ${fmtVal(s)}
               <div class="l">${s.l}</div>
